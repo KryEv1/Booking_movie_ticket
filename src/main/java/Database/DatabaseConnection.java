@@ -84,6 +84,21 @@ public class DatabaseConnection {
         }
     }
 
+    public void deleteMovie(Movie movie) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "delete from movie where movieID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, movie.getMovieID());
+            statement.execute();
+
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public List<Movie> getMovies() {
         Connection conn = this.getConnection();
         List<Movie> movies = new ArrayList<>();
@@ -264,6 +279,21 @@ public class DatabaseConnection {
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPhoneNumber());
             statement.setInt(7, user.getUserID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deleteUser(User user) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "Delete from user where userID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, user.getUserID());
 
             statement.execute();
             conn.close();
