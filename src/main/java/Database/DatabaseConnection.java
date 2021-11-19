@@ -55,6 +55,35 @@ public class DatabaseConnection {
         }
     }
 
+    public void editMovie(Movie movie) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "update movie set " +
+                            "title = ?, " +
+                            "description = ?, " +
+                            "duration = ?, " +
+                            "language = ?, " +
+                            "releaseDate = ?, " +
+                            "country = ?, " +
+                            "genre = ?" +
+                            "where movieID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, movie.getTitle());
+            statement.setString(2, movie.getDescription());
+            statement.setTime(3, movie.getDuration());
+            statement.setString(4, movie.getLanguage());
+            statement.setDate(5, movie.getReleaseDate());
+            statement.setString(6, movie.getCountry());
+            statement.setString(7, movie.getGenre());
+            statement.setInt(8, movie.getMovieID());
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public List<Movie> getMovies() {
         Connection conn = this.getConnection();
         List<Movie> movies = new ArrayList<>();
@@ -110,6 +139,33 @@ public class DatabaseConnection {
         return movie;
     }
 
+    public Movie getMovieByTitle(String title) {
+        Connection conn = this.getConnection();
+        Movie movie = new Movie();
+
+        try {
+            String query = "Select * from movie where title = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, title);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                movie.setMovieID(result.getInt("movieID"));
+                movie.setTitle(result.getString("title"));
+                movie.setDescription(result.getString("description"));
+                movie.setDuration(result.getTime("duration"));
+                movie.setLanguage(result.getString("language"));
+                movie.setReleaseDate(result.getDate("releaseDate"));
+                movie.setCountry(result.getString("country"));
+                movie.setGenre(result.getString("genre"));
+            }
+
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return movie;
+    }
 
     public User getUserIDByEmail(String email) {
         Connection conn = this.getConnection();
@@ -198,7 +254,7 @@ public class DatabaseConnection {
                             "username = ?," +
                             "password = ?," +
                             "email = ?," +
-                            "phone = ?," +
+                            "phone = ?" +
                             "where userID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, user.getName());
