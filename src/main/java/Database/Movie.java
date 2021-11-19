@@ -1,7 +1,8 @@
 package Database;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Movie {
@@ -99,6 +100,33 @@ public class Movie {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public List<Show> getShows() {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+
+        Connection conn = connection.getConnection();
+        List<Show> shows = new ArrayList<>();
+        try {
+            String query = "select * from show where movieID = ? order by startTime asc";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, this.movieID);
+
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                Show show = new Show();
+                show.setShowID(result.getInt("showID"));
+                show.setDate(result.getDate("date"));
+                show.setStartTime(result.getTime("startTime"));
+                show.setEndTime(result.getTime("endTime"));
+                show.setCinemaHallID(result.getInt("cinemaHallID"));
+
+                shows.add(show);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return shows;
     }
 
     @Override
