@@ -108,7 +108,7 @@ public class Movie {
         Connection conn = connection.getConnection();
         List<Show> shows = new ArrayList<>();
         try {
-            String query = "select * from show where movieID = ? order by startTime asc";
+            String query = "select * from bmt_database.show where movieID = ? order by startTime asc";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, this.movieID);
 

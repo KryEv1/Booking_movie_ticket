@@ -82,7 +82,7 @@ public class Show {
         List<ShowSeat> seats = new ArrayList<>();
 
         try {
-            String query = "select * from show_seat where showID = ?";
+            String query = "select * from bmt_database.show_seat where showID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, this.showID);
 
