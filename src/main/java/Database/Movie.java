@@ -1,5 +1,6 @@
 package Database;
 
+import Database.Exception.InputErrorException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,10 +124,117 @@ public class Movie {
 
                 shows.add(show);
             }
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return shows;
+    }
+
+    public void addShow(Show show) throws InputErrorException  {
+        if (show.getMovieID() != this.movieID) {
+            throw new InputErrorException();
+        }
+
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "insert into bmt_database.show (date, startTime, endTime, movieID, cinemaHallID)" +
+                    "values (?,?,?,?,?)";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setDate(1, show.getDate());
+            statement.setTime(2, show.getStartTime());
+            statement.setTime(3, show.getEndTime());
+            statement.setInt(4, show.getMovieID());
+            statement.setInt(5, show.getCinemaHallID());
+            statement.execute();
+
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editShow(Show show) throws InputErrorException {
+        if (show.getMovieID() != this.movieID) {
+            throw new InputErrorException();
+        }
+
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "update bmt_database.show set " +
+                    "date = ?, " +
+                    "startTime = ?, " +
+                    "endTime = ?, " +
+                    "cinemaHallID = ? " +
+                    "where showID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setDate(1, show.getDate());
+            statement.setTime(2, show.getStartTime());
+            statement.setTime(3, show.getEndTime());
+            statement.setInt(4, show.getCinemaHallID());
+            statement.setInt(5, show.getShowID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deleatShow(Show show) throws InputErrorException {
+        if (show.getMovieID() != this.movieID) {
+            throw new InputErrorException();
+        }
+
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "delete from bmt_database.show where showID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, show.getShowID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public Show getShowByID(int showID) {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+        Show show = new Show();
+
+        try {
+            String query = "select * from bmt_database.show where showID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, showID);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                if (result.getInt("movieID") != this.movieID) {
+                    conn.close();
+                    return null;
+                }
+                show.setShowID(showID);
+                show.setDate(result.getDate("date"));
+                show.setStartTime(result.getTime("startTime"));
+                show.setEndTime(result.getTime("endTime"));
+                show.setMovieID(this.movieID);
+                show.setCinemaHallID(result.getInt("cinemaHallID"));
+            } else {
+                conn.close();
+                return null;
+            }
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return show;
     }
 
     @Override

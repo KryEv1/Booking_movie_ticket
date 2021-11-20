@@ -37,7 +37,7 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
 
         try {
-            String query = "insert into movie (title, description, duration, language, releaseDate, country, genre)"
+            String query = "insert into bmt_database.movie (title, description, duration, language, releaseDate, country, genre)"
                             + " values (?,?,?,?,?,?,?)";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1, movie.getTitle());
@@ -59,14 +59,14 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
 
         try {
-            String query = "update movie set " +
+            String query = "update bmt_database.movie set " +
                             "title = ?, " +
                             "description = ?, " +
                             "duration = ?, " +
                             "language = ?, " +
                             "releaseDate = ?, " +
                             "country = ?, " +
-                            "genre = ?" +
+                            "genre = ? " +
                             "where movieID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, movie.getTitle());
@@ -88,7 +88,7 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
 
         try {
-            String query = "delete from movie where movieID = ?";
+            String query = "delete from bmt_database.movie where movieID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, movie.getMovieID());
             statement.execute();
@@ -103,7 +103,7 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
         List<Movie> movies = new ArrayList<>();
         try {
-            String query = "Select * from movie";
+            String query = "Select * from bmt_database.movie";
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -132,7 +132,7 @@ public class DatabaseConnection {
         Movie movie = new Movie();
 
         try {
-            String query = "Select * from movie where movieID = ?";
+            String query = "Select * from bmt_database.movie where movieID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, movieID);
             ResultSet result = statement.executeQuery();
@@ -145,6 +145,8 @@ public class DatabaseConnection {
                 movie.setReleaseDate(result.getDate("releaseDate"));
                 movie.setCountry(result.getString("country"));
                 movie.setGenre(result.getString("genre"));
+            } else {
+                return null;
             }
 
             conn.close();
@@ -159,7 +161,7 @@ public class DatabaseConnection {
         Movie movie = new Movie();
 
         try {
-            String query = "Select * from movie where title = ?";
+            String query = "Select * from bmt_database.movie where title = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, title);
 
@@ -173,6 +175,8 @@ public class DatabaseConnection {
                 movie.setReleaseDate(result.getDate("releaseDate"));
                 movie.setCountry(result.getString("country"));
                 movie.setGenre(result.getString("genre"));
+            } else {
+                return null;
             }
 
             conn.close();
@@ -187,7 +191,7 @@ public class DatabaseConnection {
         User user = new User();
 
         try {
-            String query = "Select * from user where email = ?";
+            String query = "Select * from bmt_database.user where email = ?";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1,email);
 
@@ -201,6 +205,8 @@ public class DatabaseConnection {
                 user.setEmail(result.getString("email"));
                 user.setPhoneNumber(result.getString("phone"));
                 user.setUserType(result.getInt("userType"));
+            } else {
+                return null;
             }
 
             conn.close();
@@ -215,7 +221,7 @@ public class DatabaseConnection {
         User user = new User();
 
         try {
-            String query = "Select * from user where userID = ?";
+            String query = "Select * from bmt_database.user where userID = ?";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, userID);
 
@@ -229,6 +235,8 @@ public class DatabaseConnection {
                 user.setEmail(result.getString("email"));
                 user.setPhoneNumber(result.getString("phone"));
                 user.setUserType(result.getInt("userType"));
+            } else {
+                return null;
             }
 
             conn.close();
@@ -242,7 +250,7 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
 
         try {
-            String query = "insert into user (name, birth, username, password, email, phone, userType)"
+            String query = "insert into bmt_database.user (name, birth, username, password, email, phone, userType)"
                             + "values (?,?,?,?,?,?,?)";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, user.getName());
@@ -263,13 +271,13 @@ public class DatabaseConnection {
     public void editUser(User user) {
         Connection conn = this.getConnection();
         try {
-            String query = "update user set " +
+            String query = "update bmt_database.user set " +
                             "name = ?," +
                             "birth = ?," +
                             "username = ?," +
                             "password = ?," +
                             "email = ?," +
-                            "phone = ?" +
+                            "phone = ? " +
                             "where userID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, user.getName());
@@ -291,7 +299,7 @@ public class DatabaseConnection {
         Connection conn = this.getConnection();
 
         try {
-            String query = "Delete from user where userID = ?";
+            String query = "Delete from bmt_database.user where userID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, user.getUserID());
 
@@ -305,7 +313,7 @@ public class DatabaseConnection {
     public boolean checkUser(int userID, String email) {
         Connection conn = this.getConnection();
         try {
-            String query = "Select * from user where userID = ? and email = ?";
+            String query = "Select * from bmt_database.user where userID = ? and email = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, userID);
             statement.setString(2, email);
@@ -322,4 +330,270 @@ public class DatabaseConnection {
         }
         return false;
     }
+
+    public void addCinema(Cinema cinema) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "insert into bmt_database.cinema (name, totalCinemalHalls) " +
+                            "values (?,?)";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, cinema.getName());
+            statement.setInt(2, cinema.getTotalHalls());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editCinema(Cinema cinema) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "update bmt_database.cinema set " +
+                            "name = ?, " +
+                            "totalCinemalHalls = ? " +
+                            "where cinemaID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, cinema.getName());
+            statement.setInt(2, cinema.getTotalHalls());
+            statement.setInt(3, cinema.getCinemaID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deleteCinema(Cinema cinema) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "delete from bmt_database.cinema where cinemaID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, cinema.getCinemaID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public Cinema getCinemaByID(int cinemaID) {
+        Connection conn = this.getConnection();
+        Cinema cinema = new Cinema();
+
+        try {
+            String query = "select * from bmt_database.cinema where cinemaID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, cinemaID);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                cinema.setCinemaID(cinemaID);
+                cinema.setTotalHalls(result.getInt("totalCinemaHalls"));
+            } else {
+                conn.close();
+                return null;
+            }
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return cinema;
+    }
+
+    public Cinema getCinemaByName(String name) {
+        Connection conn = this.getConnection();
+        Cinema cinema = new Cinema();
+
+        try {
+            String query = "select * from bmt_database.cinema where name = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, name);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                cinema.setCinemaID(result.getInt("cinemaID"));
+                cinema.setName(name);
+                cinema.setTotalHalls(result.getInt("totalCinemaHalls"));
+            } else {
+                conn.close();
+                return null;
+            }
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return cinema;
+    }
+    
+    public void addBooking(Booking booking) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "insert into bmt_database.booking (numberOfSeats, timeStamp, status, userID) " +
+                            "values (?,?,?,?)";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, booking.getNumberOfSeats());
+            statement.setTimestamp(2, booking.getTimestamp());
+            statement.setInt(3, booking.getStatus());
+            statement.setInt(4, booking.getUserID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editBooking(Booking booking) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "update bmt_database.booking set " +
+                            "numberOfSeats = ?, " +
+                            "timeStamp = ?, " +
+                            "status = ?," +
+                            "where bookingID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, booking.getNumberOfSeats());
+            statement.setTimestamp(2, booking.getTimestamp());
+            statement.setInt(3, booking.getStatus());
+            statement.setInt(4, booking.getBookingID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deleteBooking(Booking booking) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "delete from bmt_database.booking where bookingID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, booking.getBookingID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public Booking getBookingByID(int bookingID) {
+        Connection conn = this.getConnection();
+        Booking booking = new Booking();
+
+        try {
+            String query = "select * from bmt_database.booking where bookingID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, bookingID);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                booking.setBookingID(bookingID);
+                booking.setNumberOfSeats(result.getInt("numberOfSeats"));
+                booking.setTimestamp(result.getTimestamp("timeStamp"));
+                booking.setStatus(result.getInt("status"));
+                booking.setUserID(result.getInt("userID"));
+            } else {
+                conn.close();
+                return null;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return booking;
+    }
+
+    public void addPayment(Payment payment) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "insert into bmt_database.payment (amount, timeStamp, discountCouponID, paymentMethod, bookingID) " +
+                            "values (?,?,?,?,?)";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, payment.getAmount());
+            statement.setTimestamp(2, payment.getTimestamp());
+            statement.setString(3, payment.getDiscountCoupon());
+            statement.setInt(4, payment.getPaymentMethod());
+            statement.setInt(5, payment.getBookingID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editPayment(Payment payment) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "update bmt_database.payment set " +
+                            "amount = ?, " +
+                            "timeStamp = ?, " +
+                            "discountCouponID = ?, " +
+                            "paymentMethod = ? " +
+                            "where paymentId = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, payment.getAmount());
+            statement.setTimestamp(2, payment.getTimestamp());
+            statement.setString(3, payment.getDiscountCoupon());
+            statement.setInt(4, payment.getPaymentMethod());
+            statement.setInt(5, payment.getPaymentID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deletePayment(Payment payment) {
+        Connection conn = this.getConnection();
+
+        try {
+            String query = "delete from bmt_database.payment where paymentId = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, payment.getPaymentID());
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public Payment getPaymentById(int paymentID) {
+        Connection conn = this.getConnection();
+        Payment payment = new Payment();
+
+        try {
+            String query = "select * from bmt_database.payment where paymentId = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, paymentID);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                payment.setPaymentID(paymentID);
+                payment.setAmount(result.getInt("amount"));
+                payment.setTimestamp(result.getTimestamp("timeStamp"));
+                payment.setDiscountCoupon(result.getString("discountCouponID"));
+                payment.setPaymentMethod(result.getInt("paymentMethod"));
+                payment.setBookingID(result.getInt("bookingID"));
+            } else {
+                return null;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return payment;
+    }
+
 }

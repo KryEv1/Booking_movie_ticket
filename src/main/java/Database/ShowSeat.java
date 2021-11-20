@@ -1,5 +1,9 @@
 package Database;
 
+import javax.xml.crypto.Data;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class ShowSeat {
@@ -86,5 +90,60 @@ public class ShowSeat {
     @Override
     public int hashCode() {
         return Objects.hash(showSeatID, cinema_seatID, showID);
+    }
+
+    public void updateStatus(int status) {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "update bmt_database.show_seat set " +
+                            "status = ? " +
+                            "where showSeatID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, status);
+            statement.setInt(2, this.showSeatID);
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editPrice(float price) {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "update bmt_database.show_seat set " +
+                            "price = ? " +
+                            "where showSeatID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setFloat(1, price);
+            statement.setInt(2, this.showSeatID);
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void editShow(int showID) {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "update bmt_database.show_seat set " +
+                            "showID = ? " +
+                            "where showSeatID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, showID);
+            statement.setInt(2, this.showSeatID);
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

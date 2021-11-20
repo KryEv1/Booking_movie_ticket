@@ -25,16 +25,13 @@ DROP TABLE IF EXISTS `booking`;
 CREATE TABLE `booking` (
   `bookingID` int NOT NULL AUTO_INCREMENT,
   `numberOfSeats` int NOT NULL,
-  `timeStamp` datetime NOT NULL,
+  `timeStamp` timestamp NOT NULL,
   `status` int NOT NULL,
   `userID` int NOT NULL,
-  `showID` int NOT NULL,
   PRIMARY KEY (`bookingID`),
-  KEY `showID_idx` (`showID`),
   KEY `userID_idx` (`userID`),
-  CONSTRAINT `booked_showID` FOREIGN KEY (`showID`) REFERENCES `show` (`showID`),
   CONSTRAINT `userID` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +46,7 @@ CREATE TABLE `cinema` (
   `name` varchar(64) NOT NULL,
   `totalCinemalHalls` int NOT NULL,
   PRIMARY KEY (`cinemaID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +64,7 @@ CREATE TABLE `cinema_hall` (
   PRIMARY KEY (`hallID`),
   KEY `cinemaID_idx` (`cinemaID`),
   CONSTRAINT `cinemaID` FOREIGN KEY (`cinemaID`) REFERENCES `cinema` (`cinemaID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,7 +82,7 @@ CREATE TABLE `cinema_seat` (
   PRIMARY KEY (`seatID`),
   KEY `hallID_idx` (`cinemaHallID`),
   CONSTRAINT `hallID` FOREIGN KEY (`cinemaHallID`) REFERENCES `cinema_hall` (`hallID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +102,7 @@ CREATE TABLE `movie` (
   `country` varchar(64) DEFAULT NULL,
   `genre` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`movieID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,14 +115,14 @@ DROP TABLE IF EXISTS `payment`;
 CREATE TABLE `payment` (
   `paymentId` int NOT NULL AUTO_INCREMENT,
   `amount` int NOT NULL,
-  `timeStamp` datetime NOT NULL,
+  `timeStamp` timestamp NOT NULL,
   `discountCouponID` varchar(20) DEFAULT NULL,
   `paymentMethod` int NOT NULL,
   `bookingID` int NOT NULL,
   PRIMARY KEY (`paymentId`),
   KEY `payment_bookingID_idx` (`bookingID`),
   CONSTRAINT `payment_bookingID` FOREIGN KEY (`bookingID`) REFERENCES `booking` (`bookingID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +144,7 @@ CREATE TABLE `show` (
   KEY `cinemaHallId_idx` (`cinemaHallID`),
   CONSTRAINT `cinemaHallId` FOREIGN KEY (`cinemaHallID`) REFERENCES `cinema_hall` (`hallID`),
   CONSTRAINT `movieId` FOREIGN KEY (`movieID`) REFERENCES `movie` (`movieID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,7 +168,7 @@ CREATE TABLE `show_seat` (
   CONSTRAINT `booking` FOREIGN KEY (`bookingID`) REFERENCES `booking` (`bookingID`),
   CONSTRAINT `cinema_seatID` FOREIGN KEY (`cinema_seatID`) REFERENCES `cinema_seat` (`seatID`),
   CONSTRAINT `showID` FOREIGN KEY (`showID`) REFERENCES `show` (`showID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,7 +188,7 @@ CREATE TABLE `user` (
   `phone` varchar(16) NOT NULL,
   `userType` int NOT NULL,
   PRIMARY KEY (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -203,4 +200,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-19 20:36:28
+-- Dump completed on 2021-11-21  0:52:37

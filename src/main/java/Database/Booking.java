@@ -1,90 +1,89 @@
 package Database;
 
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Show {
-    private int showID;
-    private Date date;
-    private Time startTime;
-    private Time endTime;
-    private int movieID;
-    private int cinemaHallID;
+public class Booking {
+    private int bookingID;
+    private int numberOfSeats;
+    private Timestamp timestamp;
+    private int status;
+    private int userID;
 
-    public Show() {}
+    public Booking() {}
 
-    public Show(Date date, Time startTime, Time endTime, int movieID, int cinemaHallID) {
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.movieID = movieID;
-        this.cinemaHallID = cinemaHallID;
+    public Booking(int numberOfSeats, Timestamp timestamp, int status, int userID) {
+        this.numberOfSeats = numberOfSeats;
+        this.timestamp = timestamp;
+        this.status = status;
+        this.userID = userID;
     }
 
-    public int getShowID() {
-        return showID;
+    public int getBookingID() {
+        return bookingID;
     }
 
-    public void setShowID(int showID) {
-        this.showID = showID;
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
     }
 
-    public Date getDate() {
-        return date;
+    public int getNumberOfSeats() {
+        return numberOfSeats;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setNumberOfSeats(int numberOfSeats) {
+        this.numberOfSeats = numberOfSeats;
     }
 
-    public Time getStartTime() {
-        return startTime;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setStartTime(Time startTime) {
-        this.startTime = startTime;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public Time getEndTime() {
-        return endTime;
+    public int getStatus() {
+        return status;
     }
 
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public int getMovieID() {
-        return movieID;
+    public int getUserID() {
+        return userID;
     }
 
-    public void setMovieID(int movieID) {
-        this.movieID = movieID;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
-    public int getCinemaHallID() {
-        return cinemaHallID;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return bookingID == booking.bookingID;
     }
 
-    public void setCinemaHallID(int cinemaHallID) {
-        this.cinemaHallID = cinemaHallID;
+    @Override
+    public int hashCode() {
+        return Objects.hash(bookingID);
     }
 
-    public Movie getMovieInfo() {
-        DatabaseConnection connection = DatabaseConnection.getInstance();
-        return connection.getMovieByID(movieID);
-    }
-
-    public List<ShowSeat> getSeats() {
+    public List<ShowSeat> getBookedSeats() {
         DatabaseConnection connection = DatabaseConnection.getInstance();
         Connection conn = connection.getConnection();
         List<ShowSeat> seats = new ArrayList<>();
 
         try {
-            String query = "select * from bmt_database.show_seat where showID = ?";
+            String query = "select * from show_seat where bookingID = ?";
             PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, this.showID);
+            statement.setInt(1, this.bookingID);
 
             ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -95,7 +94,6 @@ public class Show {
                 seat.setCinema_seatID(result.getInt("cinema_seatID"));
                 seat.setShowID(result.getInt("showID"));
                 seat.setBookingID(result.getInt("bookingID"));
-
                 seats.add(seat);
             }
             conn.close();
@@ -103,6 +101,25 @@ public class Show {
             throwables.printStackTrace();
         }
         return seats;
+    }
+
+    public void updateStatus(int status) {
+        DatabaseConnection connection = DatabaseConnection.getInstance();
+        Connection conn = connection.getConnection();
+
+        try {
+            String query = "update bmt_database.booking set " +
+                            "status = ? " +
+                            "where showSeatID = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, status);
+            statement.setInt(2, this.bookingID);
+
+            statement.execute();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public ShowSeat getSeatByID(int seatID) {
@@ -117,7 +134,7 @@ public class Show {
             ResultSet result = statement.executeQuery();
 
             if (result.next()) {
-                if (result.getInt("showID") != this.showID) {
+                if (result.getInt("bookingID") != this.bookingID) {
                     conn.close();
                     return null;
                 }
@@ -136,19 +153,5 @@ public class Show {
             throwables.printStackTrace();
         }
         return seat;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Show show = (Show) o;
-        return showID == show.showID && movieID == show.movieID && cinemaHallID == show.cinemaHallID
-                && date.equals(show.date) && startTime.equals(show.startTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(showID, date, startTime, movieID, cinemaHallID);
     }
 }
